@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "RestSerializer for parch to normalize request/response",
   "main": "index.js",
-  "types": "lib/parch-rest-serializer.d.ts",
+  "types": "lib/serializer.d.ts",
   "scripts": {
     "changelog": "conventional-changelog -s -p angular -i CHANGELOG.md",
     "coverage": "NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- --compilers ts:ts-node/register --recursive",
