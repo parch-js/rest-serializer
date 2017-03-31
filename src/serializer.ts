@@ -44,10 +44,9 @@ export default class RestSerializer {
     let key;
 
     for (const instance of instances) {
-      const associations = (instance.Model as any).associations;
       const json = instance.toJSON();
 
-      await this.normalizeRelationships(instance, json, associations);
+      await this.normalizeRelationships(instance, json);
 
       records.push(json);
 
@@ -78,9 +77,8 @@ export default class RestSerializer {
     const response = {
       [key]: json
     }
-    const associations = (instance.Model as any).associations;
 
-    await this.normalizeRelationships(instance, response[key], associations);
+    await this.normalizeRelationships(instance, response[key]);
 
     return response;
   }
@@ -105,7 +103,9 @@ export default class RestSerializer {
     }
   }
 
-  async normalizeRelationships(instance: ModelInstance, payload: Object, associations: Object): Promise<any> {
+  async normalizeRelationships(instance: ModelInstance, payload: Object): Promise<any> {
+    const associations = (instance.Model as any).associations;
+
     for (const association in associations) {
       const relationship = await this.getRelationships(
         instance,

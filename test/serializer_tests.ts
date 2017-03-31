@@ -101,10 +101,20 @@ describe("RestSerializer", function () {
       const associations = user.Model.associations;
 
       return serializer
-        .normalizeRelationships(user, user.toJSON(), associations)
-        .then(user => {
-          expect(user.projects[0]).to.eql(project.id);
+        .normalizeRelationships(user, user.toJSON())
+        .then(res=> {
+          expect(res.projects[0]).to.eql(project.id);
         });
+    });
+
+    it("returns an empty array if no records are found", function () {
+      const associations = user.Model.associations;
+
+      return user.setProjects([])
+        .then(() => serializer.normalizeRelationships( user, user.toJSON()))
+        .then(res => {
+          expect(res.projects).to.eql([]);
+      });
     });
   });
 });
