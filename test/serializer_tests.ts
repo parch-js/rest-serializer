@@ -49,7 +49,11 @@ describe("RestSerializer", function () {
           fixtures.GroupModel.create({ name: "awesomeness" }),
           fixtures.ProjectModel.create({ name: "test" }),
           fixtures.UserModel.create({ firstName: "jane" })
-        ]).then(([awesomeness, test, jane]) => {
+        ]).then(response => {
+          const awesomeness = response[0];
+          const test = response[1];
+          const jane = response[2];
+
           group = awesomeness;
           parent = jane;
           project = test;
@@ -84,7 +88,11 @@ describe("RestSerializer", function () {
         fixtures.GroupModel.create({ name: "awesomeness" }),
         fixtures.ProjectModel.create({ name: "test" }),
         fixtures.UserModel.create({ firstName: "jane" })
-      ]).then(([awesomeness, test, jane]) => {
+      ]).then(response => {
+        const awesomeness = response[0];
+        const test = response[1];
+        const jane = response[2];
+
         group = awesomeness;
         parent = jane;
         project = test;
