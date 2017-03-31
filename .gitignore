@@ -1,0 +1,8 @@
+/.DS_Store
+/coverage
+/docs
+/lib
+/.tscache
+/node_modules
+/npm-debug.log
+.baseDir.ts
