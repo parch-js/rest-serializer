@@ -7,7 +7,7 @@
 ## Usage
 
 ```typescript
-import RestSerializer from @parch-js/rest-serializer;
+import RestSerializer from "@parch-js/rest-serializer";
 
 export default class FooSerializer extends RestSerializer {};
 ```
