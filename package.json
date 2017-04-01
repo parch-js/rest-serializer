@@ -1,5 +1,5 @@
 {
-  "name": "@parch-js/parch-rest-serializer",
+  "name": "@parch-js/rest-serializer",
   "version": "0.0.1",
   "description": "RestSerializer for parch to normalize request/response",
   "main": "index.js",
