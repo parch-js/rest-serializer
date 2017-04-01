@@ -5,10 +5,11 @@
   "main": "index.js",
   "types": "lib/serializer.d.ts",
   "scripts": {
-    "changelog": "conventional-changelog -s -p angular -i CHANGELOG.md",
-    "coverage": "NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- --compilers ts:ts-node/register --recursive",
     "build": "tsc -p .",
     "build:watch": "chokidar 'src/**/*' 'test/**/*.ts' -c 'npm run build'",
+    "changelog": "conventional-changelog -s -p angular -i CHANGELOG.md",
+    "coverage": "NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha -- --compilers ts:ts-node/register --recursive",
+    "docs": "typedoc --out docs ./src",
     "lint": "tslint src/**/*.ts",
     "prepare-release": "curl -sL https://gist.githubusercontent.com/dylanfoster/35b06db9aaa9237da77eff4a8eec0a22/raw/83ec714ec64f7ec36c5004588aa259354fc87b51/prepare-release.sh | bash -s",
     "prepublish": "npm run build",
@@ -37,6 +38,7 @@
     "ts-node": "^3.0.2",
     "tslint": "^5.0.0",
     "tslint-config-standard": "^4.0.0",
+    "typedoc": "^0.5.9",
     "typescript": "^2.2.2"
   },
   "dependencies": {
