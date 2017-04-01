@@ -8,8 +8,7 @@
     "sourceMap": false,
     "outDir": "./lib",
     "declaration": true,
-    "noImplicitAny": false,
-    "types": ["mocha"]
+    "noImplicitAny": false
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*"]
