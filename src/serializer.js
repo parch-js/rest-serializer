@@ -1,44 +1,20 @@
-import * as inflect from "inflect";
-import Sequelize = require("sequelize");
-
-export interface AnyAttributes {};
-export interface Association {
-  accessors: {
-    add?: string;
-    addMultiple?: string;
-    count?: string;
-    create: string;
-    get: string;
-    hasAll?: string;
-    hasSingle?: string;
-    remove?: string;
-    removeMultiple?: string;
-    set: string;
-  };
-}
-export interface ModelInstance extends Sequelize.Instance<AnyAttributes> {};
-
-export interface NormalizedResponse {
-  [key: string]: Object;
-}
+import inflect from "inflect";
 
 export default class RestSerializer {
-  keyForRecord(instance: ModelInstance, singular: boolean) {
-    const tableName = instance.Model.getTableName() as string;
+  keyForRecord(instance, singular) {
+    const tableName = instance.Model.getTableName();
     const recordKey = tableName.toLowerCase();
 
-    if (singular) {
-      return inflect.singularize(recordKey);
-    }
+    if (singular) { return inflect.singularize(recordKey); }
 
     return inflect.pluralize(recordKey);
   }
 
-  keyForRelationship(relationship: string) {
+  keyForRelationship(relationship) {
     return inflect.pluralize(relationship.toLowerCase());
   }
 
-  async normalizeArrayResponse(instances: ModelInstance[]): Promise<NormalizedResponse> {
+  async normalizeArrayResponse(instances) {
     const records = [];
     const response = {};
     let key;
@@ -60,7 +36,7 @@ export default class RestSerializer {
     return response;
   }
 
-  normalizeResponse(instance: any, method: string): Promise<NormalizedResponse> {
+  normalizeResponse(instance, method) {
     switch (method) {
       case "createRecord":
       case "findOne":
@@ -71,19 +47,17 @@ export default class RestSerializer {
     }
   }
 
-  async normalizeSingularResponse(instance: ModelInstance): Promise<NormalizedResponse> {
+  async normalizeSingularResponse(instance) {
     const json = instance.toJSON();
     const key = this.keyForRecord(instance, true);
-    const response = {
-      [key]: json
-    }
+    const response = { [key]: json }
 
     await this.normalizeRelationships(instance, response[key]);
 
     return response;
   }
 
-  async getRelationships(instance: ModelInstance, payload: Object, association: Association): Promise<any> {
+  async getRelationships(instance, payload, association) {
     const accessors = association.accessors;
     const isManyRelationship = Object.keys(accessors).some(accessor => {
       return [
@@ -103,8 +77,8 @@ export default class RestSerializer {
     }
   }
 
-  async normalizeRelationships(instance: ModelInstance, payload: Object): Promise<any> {
-    const associations = (instance.Model as any).associations;
+  async normalizeRelationships(instance, payload) {
+    const associations = instance.Model.associations;
 
     for (const association in associations) {
       const relationship = await this.getRelationships(

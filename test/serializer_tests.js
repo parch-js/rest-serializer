@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import RestSerializer from "../src/serializer";
+import RestSerializer from "../";
 import fixtures from "./fixtures";
 
 describe("RestSerializer", function () {
@@ -9,11 +9,11 @@ describe("RestSerializer", function () {
   beforeEach(function () {
     serializer = new RestSerializer();
 
-    return fixtures.sequelize.sync({ force: true }).then(() => {
-      return fixtures.UserModel.create({
+    return fixtures.sequelize.sync({ force: true }).then(() =>
+      fixtures.UserModel.create({
         firstName: "John"
-      }).then(john => user = john);
-    });
+      }).then(john => { user = john; })
+    );
   });
 
   describe("#normalizeResponse", function () {
@@ -110,7 +110,7 @@ describe("RestSerializer", function () {
 
       return serializer
         .normalizeRelationships(user, user.toJSON())
-        .then(res=> {
+        .then(res => {
           expect(res.projects[0]).to.eql(project.id);
         });
     });
@@ -119,10 +119,10 @@ describe("RestSerializer", function () {
       const associations = user.Model.associations;
 
       return user.setProjects([])
-        .then(() => serializer.normalizeRelationships( user, user.toJSON()))
+        .then(() => serializer.normalizeRelationships(user, user.toJSON()))
         .then(res => {
           expect(res.projects).to.eql([]);
-      });
+        });
     });
   });
 });

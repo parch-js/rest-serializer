@@ -1,6 +1,6 @@
 "use strict";
 
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 
 const connection = {
   dialect: "sqlite",
@@ -16,19 +16,19 @@ const sequelize = new Sequelize(
   connection
 );
 
-const UserModel = sequelize.define('user', {
+const UserModel = sequelize.define("user", {
   firstName: {
     type: Sequelize.STRING
   }
 });
 
-const ProjectModel = sequelize.define('project', {
+const ProjectModel = sequelize.define("project", {
   name: {
     type: Sequelize.STRING
   }
 });
 
-const GroupModel = sequelize.define('group', {
+const GroupModel = sequelize.define("group", {
   name: {
     type: Sequelize.STRING
   }
@@ -44,4 +44,4 @@ export default {
   Sequelize,
   UserModel,
   sequelize
-}
+};
