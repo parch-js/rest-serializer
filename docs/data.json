@@ -1,0 +1,229 @@
+{
+    "project": {
+        "name": "@parch-js/orm",
+        "url": "https://github.com/parch-js/orm",
+        "version": "0.0.1",
+        "description": "RestSerializer for parch to normalize request/response"
+    },
+    "files": {
+        "docs/assets/vendor/bootstrap/js/bootstrap.min.js": {
+            "name": "docs/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/serializer.js": {
+            "name": "src/serializer.js",
+            "modules": {},
+            "classes": {
+                "RestSerializer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "RestSerializer": {
+            "name": "RestSerializer",
+            "shortname": "RestSerializer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/serializer.js",
+            "line": 3,
+            "is_constructor": 1
+        }
+    },
+    "elements": {},
+    "classitems": [
+        {
+            "file": "docs/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "line": 1,
+            "description": "Bootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 8,
+            "description": "Returns an array of ids for a give hasMany/belongsToMany relatioship",
+            "itemtype": "method",
+            "name": "getRelationships",
+            "params": [
+                {
+                    "name": "instance",
+                    "description": "Sequelize model instance",
+                    "type": "Object"
+                },
+                {
+                    "name": "association",
+                    "description": "Sequelize model instance",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "example": [
+                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  return serializer.getRelationships(user, user.Model.associations.Project);\n}).then(relationships => {\n  /**\n   * [1, 2, 3]\n   *\n});\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 47,
+            "description": "Returns the name string for the record",
+            "itemtype": "method",
+            "name": "keyForRecord",
+            "params": [
+                {
+                    "name": "instance",
+                    "description": "sequelize model instance",
+                    "type": "Object"
+                },
+                {
+                    "name": "singular",
+                    "description": "singular or plural name",
+                    "type": "Boolean"
+                }
+            ],
+            "return": {
+                "description": "name string for record root",
+                "type": "String"
+            },
+            "example": [
+                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  const res = {};\n  const resKey = serializer.keyForRecord(user, true);\n\n  res[resKey] = user.toJSON();\n\n  return res;\n});\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 76,
+            "description": "Return the object key for a relationship",
+            "itemtype": "method",
+            "name": "keyForRelationship",
+            "params": [
+                {
+                    "name": "relationship",
+                    "description": "the relationship name (e.g. `Projects`)",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "name string for the relationship",
+                "type": "String"
+            },
+            "example": [
+                "\n```javascript\nreturn serializer.keyForRelationship(\"Projects\").then(key => {\n  // \"projects\"\n});\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 94,
+            "description": "Takes an array of Sequelize instances and returns an object with a root key\nbased on the model name and an array of pojo records",
+            "itemtype": "method",
+            "name": "normalizeArrayResponse",
+            "params": [
+                {
+                    "name": "instances",
+                    "description": "Sequelize instances",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "<Object, Error>",
+                "type": "Promise"
+            },
+            "example": [
+                "\n```javascript\nreturn orm.findAll(\"user\").then(users => {\n  return serializer.normalizeArrayResponse(instances);\n}).then(response => {\n  /**\n   * {\n   *   users: [{\n   *   }]\n   * }\n});\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 137,
+            "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
+            "itemtype": "method",
+            "name": "normalizeResponse",
+            "params": [
+                {
+                    "name": "instance",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "method",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "<Object, Error>",
+                "type": "Promise"
+            },
+            "example": [
+                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeResponse(instance, \"findOne\");\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *   }\n   * }\n})\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 170,
+            "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
+            "itemtype": "method",
+            "name": "normalizeSingularResponse",
+            "params": [
+                {
+                    "name": "instance",
+                    "description": "Sequelize model instance",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "<Object, Error>",
+                "type": "Promise"
+            },
+            "example": [
+                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeSingularResponse(instance, \"findOne\");\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *   }\n   * }\n});\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 201,
+            "itemtype": "method",
+            "name": "normalizeRelationships",
+            "params": [
+                {
+                    "name": "instance",
+                    "description": "Sequelize model instance",
+                    "type": "Object"
+                },
+                {
+                    "name": "payload",
+                    "description": "Pojo representation of Sequelize model instance",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "<Object, Error>",
+                "type": "Promis"
+            },
+            "example": [
+                "\n```javascript\nreturn store.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeRelationships(user, user.toJSON());\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *     projects: [1, 2, 3]\n   *   }\n   * }\n});\n```"
+            ],
+            "class": "RestSerializer"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nBootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "line": " docs/assets/vendor/bootstrap/js/bootstrap.min.js:1"
+        }
+    ]
+}

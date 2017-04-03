@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>RestSerializer - @parch-js/orm</title>
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/lucid.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+            @parch-js/orm
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.0.1</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/RestSerializer"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+<div>
+    <div id="sidebar">
+    <div id="classes">
+        <ul id="api-classes" class="nav nav-list">
+                <li><a href="../classes/RestSerializer.html">RestSerializer</a></li>
+        </ul>
+    </div>
+    </div>
+</div>
+        </div>
+        <div class="span9">
+    <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<div class="page-header">
+    <h1>RestSerializer</h1>
+</div>
+
+
+
+
+
+
+
+<!-- table of contents -->
+
+<div id="class-toc" class="page-section">
+	<h2>Table of Contents</h2>
+    <ul>
+		<li>
+			<strong>Methods</strong>
+			<ul>
+				<li><a href="#method-getRelationships"><span class="im">getRelationships</span>(<span class="ia">instance</span><span class="ia">association</span>)</a></li>
+				<li><a href="#method-keyForRecord"><span class="im">keyForRecord</span>(<span class="ia">instance</span><span class="ia">singular</span>)</a></li>
+				<li><a href="#method-keyForRelationship"><span class="im">keyForRelationship</span>(<span class="ia">relationship</span>)</a></li>
+				<li><a href="#method-normalizeArrayResponse"><span class="im">normalizeArrayResponse</span>(<span class="ia">instances</span>)</a></li>
+				<li><a href="#method-normalizeRelationships"><span class="im">normalizeRelationships</span>(<span class="ia">instance</span><span class="ia">payload</span>)</a></li>
+				<li><a href="#method-normalizeResponse"><span class="im">normalizeResponse</span>(<span class="ia">instance</span><span class="ia">method</span>)</a></li>
+				<li><a href="#method-normalizeSingularResponse"><span class="im">normalizeSingularResponse</span>(<span class="ia">instance</span>)</a></li>
+			</ul>
+		</li>
+
+
+
+	</ul>
+</div>
+
+<!-- details -->
+
+    <div class="constructor yuidoc-class-constructor page-section">
+        <h2>Constructor</h2>
+        <div class="item-list">
+<div id="method-RestSerializer" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>RestSerializer</code></span>
+
+		<span class="paren">()</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l3"><code>src&#x2F;serializer.js:3</code></a>
+		</p>
+
+
+
+	</div>
+
+
+
+
+</div>
+        </div>
+    </div>
+
+    <div id="methods" class="page-section">
+        <h2 class="off-left">Methods</h2>
+        <div class="item-list">
+<div id="method-getRelationships" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>getRelationships</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instance</code>
+				</li>
+				<li class="arg">
+						<code>association</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l8"><code>src&#x2F;serializer.js:8</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Returns an array of ids for a give hasMany/belongsToMany relatioship</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instance</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>Sequelize model instance</p>
+</div>
+
+				</li>
+				<li class="param">
+						<code class="param-name">association</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>Sequelize model instance</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return orm.findOne("user", 1).then(user =&gt; {
+  return serializer.getRelationships(user, user.Model.associations.Project);
+}).then(relationships =&gt; {
+  /**
+   * [1, 2, 3]
+   *
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-keyForRecord" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>keyForRecord</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instance</code>
+				</li>
+				<li class="arg">
+						<code>singular</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l47"><code>src&#x2F;serializer.js:47</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Returns the name string for the record</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instance</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>sequelize model instance</p>
+</div>
+
+				</li>
+				<li class="param">
+						<code class="param-name">singular</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+
+					<div class="param-description"><p>singular or plural name</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+					<p>name string for record root</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return orm.findOne("user", 1).then(user =&gt; {
+  const res = {};
+  const resKey = serializer.keyForRecord(user, true);
+
+  res[resKey] = user.toJSON();
+
+  return res;
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-keyForRelationship" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>keyForRelationship</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>relationship</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l76"><code>src&#x2F;serializer.js:76</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Return the object key for a relationship</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">relationship</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+					<div class="param-description"><p>the relationship name (e.g. <code>Projects</code>)</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+					<p>name string for the relationship</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return serializer.keyForRelationship("Projects").then(key =&gt; {
+  // "projects"
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-normalizeArrayResponse" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>normalizeArrayResponse</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instances</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l94"><code>src&#x2F;serializer.js:94</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Takes an array of Sequelize instances and returns an object with a root key
+based on the model name and an array of pojo records</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instances</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+
+					<div class="param-description"><p>Sequelize instances</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
+					<p>&lt;Object, Error&gt;</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return orm.findAll("user").then(users =&gt; {
+  return serializer.normalizeArrayResponse(instances);
+}).then(response =&gt; {
+  /**
+   * {
+   *   users: [{
+   *   }]
+   * }
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-normalizeRelationships" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>normalizeRelationships</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instance</code>
+				</li>
+				<li class="arg">
+						<code>payload</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type">Promis</span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l201"><code>src&#x2F;serializer.js:201</code></a>
+		</p>
+
+
+
+	</div>
+
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instance</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>Sequelize model instance</p>
+</div>
+
+				</li>
+				<li class="param">
+						<code class="param-name">payload</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>Pojo representation of Sequelize model instance</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type">Promis</span>:
+					<p>&lt;Object, Error&gt;</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return store.findOne("user", 1).then(user =&gt; {
+  return serializer.normalizeRelationships(user, user.toJSON());
+}).then(response =&gt; {
+  /**
+   * {
+   *   user: {
+   *     projects: [1, 2, 3]
+   *   }
+   * }
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-normalizeResponse" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>normalizeResponse</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instance</code>
+				</li>
+				<li class="arg">
+						<code>method</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l137"><code>src&#x2F;serializer.js:137</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Takes a single Sequelize instance and returns an object with a root key based
+on the model name and a pojo record</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instance</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+
+				</li>
+				<li class="param">
+						<code class="param-name">method</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
+					<p>&lt;Object, Error&gt;</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return orm.findOne("user", 1).then(user =&gt; {
+  return serializer.normalizeResponse(instance, "findOne");
+}).then(response =&gt; {
+  /**
+   * {
+   *   user: {
+   *   }
+   * }
+})
+</code></pre>
+
+			</div>
+		</div>
+</div>
+<div id="method-normalizeSingularResponse" class="method item">
+	<div class="method-signature">
+	<span class="name"><code>normalizeSingularResponse</code></span>
+
+		<div class="args">
+			<span class="paren">(</span><ul class="args-list inline commas">
+				<li class="arg">
+						<code>instance</code>
+				</li>
+			</ul><span class="paren">)</span>
+		</div>
+		<span class="returns-inline">
+			<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
+		</span>
+	</div>
+
+
+
+
+
+
+	<div class="meta">
+				<p>
+				Defined in
+		<a href="../files/src_serializer.js.html#l170"><code>src&#x2F;serializer.js:170</code></a>
+		</p>
+
+
+
+	</div>
+
+	<div class="description"><p>Takes a single Sequelize instance and returns an object with a root key based
+on the model name and a pojo record</p>
+</div>
+
+		<div class="params">
+			<h4>Parameters:</h4>
+
+			<ul class="params-list">
+				<li class="param">
+						<code class="param-name">instance</code>
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+					<div class="param-description"><p>Sequelize model instance</p>
+</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="returns">
+			<h4>Returns:</h4>
+
+			<div class="returns-description">
+						<span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
+					<p>&lt;Object, Error&gt;</p>
+
+			</div>
+		</div>
+
+		<div class="example">
+			<h4>Example:</h4>
+
+			<div class="example-content">
+				<pre class="code prettyprint"><code class="language-javascript">return orm.findOne("user", 1).then(user =&gt; {
+  return serializer.normalizeSingularResponse(instance, "findOne");
+}).then(response =&gt; {
+  /**
+   * {
+   *   user: {
+   *   }
+   * }
+});
+</code></pre>
+
+			</div>
+		</div>
+</div>
+        </div>
+    </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>

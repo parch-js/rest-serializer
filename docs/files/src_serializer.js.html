@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/serializer.js - @parch-js/orm</title>
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/lucid.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+            @parch-js/orm
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.0.1</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/RestSerializer"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+<div>
+    <div id="sidebar">
+    <div id="classes">
+        <ul id="api-classes" class="nav nav-list">
+                <li><a href="../classes/RestSerializer.html">RestSerializer</a></li>
+        </ul>
+    </div>
+    </div>
+</div>
+        </div>
+        <div class="span9">
+    <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<div class="page-header">
+    <h1>src/serializer.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+import inflect from &quot;inflect&quot;;
+
+/**
+ * @class RestSerializer
+ * @constructor
+ */
+export default class RestSerializer {
+  /**
+   * Returns an array of ids for a give hasMany/belongsToMany relatioship
+   *
+   * @method getRelationships
+   * @param {Object} instance Sequelize model instance
+   * @param {Object} association Sequelize model instance
+   * @return {Array}
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return orm.findOne(&quot;user&quot;, 1).then(user =&gt; {
+   *   return serializer.getRelationships(user, user.Model.associations.Project);
+   * }).then(relationships =&gt; {
+   *   /**
+   *    * [1, 2, 3]
+   *    *
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  async getRelationships(instance, association) {
+    const accessors = association.accessors;
+    const isManyRelationship = Object.keys(accessors).some(accessor =&gt; {
+      return [
+        &quot;add&quot;,
+        &quot;addMultiple&quot;,
+        &quot;count&quot;,
+        &quot;hasSingle&quot;,
+        &quot;hasAll&quot;,
+        &quot;removeMultiple&quot;
+      ].some(valid =&gt; valid === accessor);
+    });
+
+    if (isManyRelationship) {
+      const relationships = await instance[association.accessors.get]();
+
+      return relationships.map(relationship =&gt; relationship.id);
+    }
+  }
+
+  /**
+   * Returns the name string for the record
+   *
+   * @method keyForRecord
+   * @param {Object} instance sequelize model instance
+   * @param {Boolean} singular singular or plural name
+   * @return {String} name string for record root
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return orm.findOne(&quot;user&quot;, 1).then(user =&gt; {
+   *   const res = {};
+   *   const resKey = serializer.keyForRecord(user, true);
+   *
+   *   res[resKey] = user.toJSON();
+   *
+   *   return res;
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  keyForRecord(instance, singular) {
+    const tableName = instance.Model.getTableName();
+    const recordKey = tableName.toLowerCase();
+
+    if (singular) { return inflect.singularize(recordKey); }
+
+    return inflect.pluralize(recordKey);
+  }
+
+  /**
+   * Return the object key for a relationship
+   *
+   * @method keyForRelationship
+   * @param {String} relationship the relationship name (e.g. &#x60;Projects&#x60;)
+   * @return {String} name string for the relationship
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return serializer.keyForRelationship(&quot;Projects&quot;).then(key =&gt; {
+   *   // &quot;projects&quot;
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  keyForRelationship(relationship) {
+    return inflect.pluralize(relationship.toLowerCase());
+  }
+
+  /**
+   * Takes an array of Sequelize instances and returns an object with a root key
+   * based on the model name and an array of pojo records
+   *
+   * @method normalizeArrayResponse
+   * @param {Array} instances Sequelize instances
+   * @return {Promise}&lt;Object, Error&gt;
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return orm.findAll(&quot;user&quot;).then(users =&gt; {
+   *   return serializer.normalizeArrayResponse(instances);
+   * }).then(response =&gt; {
+   *   /**
+   *    * {
+   *    *   users: [{
+   *    *   }]
+   *    * }
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  async normalizeArrayResponse(instances) {
+    const records = [];
+    const response = {};
+    let key;
+
+    for (const instance of instances) {
+      const json = instance.toJSON();
+
+      await this.normalizeRelationships(instance, json);
+
+      records.push(json);
+
+      if (!key) {
+        key = this.keyForRecord(instance, false);
+      }
+    }
+
+    response[key] = records;
+
+    return response;
+  }
+
+  /**
+   * Takes a single Sequelize instance and returns an object with a root key based
+   * on the model name and a pojo record
+   *
+   * @method normalizeResponse
+   * @param {Object} instance
+   * @param {String} method
+   * @return {Promise}&lt;Object, Error&gt;
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return orm.findOne(&quot;user&quot;, 1).then(user =&gt; {
+   *   return serializer.normalizeResponse(instance, &quot;findOne&quot;);
+   * }).then(response =&gt; {
+   *   /**
+   *    * {
+   *    *   user: {
+   *    *   }
+   *    * }
+   * })
+   * &#x60;&#x60;&#x60;
+   */
+  async normalizeResponse(instance, method) {
+    switch (method) {
+      case &quot;createRecord&quot;:
+      case &quot;findOne&quot;:
+      case &quot;updateRecord&quot;:
+        return this.normalizeSingularResponse(instance);
+      case &quot;findAll&quot;:
+        return this.normalizeArrayResponse(instance);
+    }
+  }
+
+  /**
+   * Takes a single Sequelize instance and returns an object with a root key based
+   * on the model name and a pojo record
+   *
+   * @method normalizeSingularResponse
+   * @param {Object} instance Sequelize model instance
+   * @return {Promise}&lt;Object, Error&gt;
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return orm.findOne(&quot;user&quot;, 1).then(user =&gt; {
+   *   return serializer.normalizeSingularResponse(instance, &quot;findOne&quot;);
+   * }).then(response =&gt; {
+   *   /**
+   *    * {
+   *    *   user: {
+   *    *   }
+   *    * }
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  async normalizeSingularResponse(instance) {
+    const json = instance.toJSON();
+    const key = this.keyForRecord(instance, true);
+    const response = { [key]: json }
+
+    await this.normalizeRelationships(instance, response[key]);
+
+    return response;
+  }
+
+  /**
+   * @method normalizeRelationships
+   * @param {Object} instance Sequelize model instance
+   * @param {Object} payload Pojo representation of Sequelize model instance
+   * @return {Promis}&lt;Object, Error&gt;
+   *
+   * @example
+   * &#x60;&#x60;&#x60;javascript
+   * return store.findOne(&quot;user&quot;, 1).then(user =&gt; {
+   *   return serializer.normalizeRelationships(user, user.toJSON());
+   * }).then(response =&gt; {
+   *   /**
+   *    * {
+   *    *   user: {
+   *    *     projects: [1, 2, 3]
+   *    *   }
+   *    * }
+   * });
+   * &#x60;&#x60;&#x60;
+   */
+  async normalizeRelationships(instance, payload) {
+    const associations = instance.Model.associations;
+
+    for (const association in associations) {
+      const relationship = await this.getRelationships(
+        instance,
+        associations[association]
+      );
+      const relationshipKey = this.keyForRelationship(association);
+
+      if (relationship) {
+        payload[relationshipKey] = relationship;
+      }
+    }
+
+    return payload;
+  }
+}
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>
