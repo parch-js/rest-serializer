@@ -1,7 +1,6 @@
 /.DS_Store
 /coverage
 /lib
-/.tscache
 /node_modules
 /npm-debug.log
-.baseDir.ts
+.nyc_output

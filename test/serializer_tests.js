@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import RestSerializer from "../";
+import RestSerializer from "../src/serializer";
 import fixtures from "./fixtures";
 
 describe("RestSerializer", function () {
