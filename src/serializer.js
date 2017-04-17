@@ -1,3 +1,5 @@
+"use strict";
+
 import inflect from "inflect";
 
 /**
@@ -38,7 +40,7 @@ export default class RestSerializer {
     });
 
     if (isManyRelationship) {
-      const relationships = await instance[association.accessors.get]();
+      const relationships = await instance[accessors.get]();
 
       return relationships.map(relationship => relationship.id);
     }
@@ -112,10 +114,18 @@ export default class RestSerializer {
    * });
    * ```
    */
-  async normalizeArrayResponse(instances) {
+  async normalizeArrayResponse(instances, fallbackName) {
     const records = [];
     const response = {};
     let key;
+
+    if (!instances || !instances.length) {
+      const key = inflect.camelize(inflect.pluralize(fallbackName), false);
+
+      response[key] = [];
+
+      return response;
+    }
 
     for (const instance of instances) {
       const json = instance.toJSON();
@@ -156,14 +166,15 @@ export default class RestSerializer {
    * })
    * ```
    */
-  async normalizeResponse(instance, method) {
+  async normalizeResponse(instance, method, fallbackName) {
     switch (method) {
       case "createRecord":
       case "findOne":
+      case "queryRecord":
       case "updateRecord":
-        return this.normalizeSingularResponse(instance);
+        return this.normalizeSingularResponse(instance, fallbackName);
       case "findAll":
-        return this.normalizeArrayResponse(instance);
+        return this.normalizeArrayResponse(instance, fallbackName);
     }
   }
 

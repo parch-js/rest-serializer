@@ -23,8 +23,20 @@ describe("RestSerializer", function () {
       });
     });
 
+    it("formats a model instance for a findAll request with no records", function () {
+      return serializer.normalizeResponse([], "findAll", "user").then(response => {
+        expect(response.users).to.eql([]);
+      });
+    });
+
     it("formats a model instance for a findOne request", function () {
       return serializer.normalizeResponse(user, "findOne").then(response => {
+        expect(response.user.firstName).to.eql("John");
+      });
+    });
+
+    it("formats a model instance for a queryRecord request", function () {
+      return serializer.normalizeResponse(user, "queryRecord").then(response => {
         expect(response.user.firstName).to.eql("John");
       });
     });

@@ -1,7 +1,6 @@
 "use strict";
 
-require("babel-polyfill");
-
+require("regenerator-runtime/runtime");
 const RestSerializer = require("./lib/serializer");
 
 module.exports = RestSerializer;
