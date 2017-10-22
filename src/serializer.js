@@ -2,11 +2,13 @@
 
 import inflect from "inflect";
 
+import JSONSerializer from "@parch-js/json-serializer";
+
 /**
  * @class RestSerializer
  * @constructor
  */
-export default class RestSerializer {
+export default class RestSerializer extends JSONSerializer {
   /**
    * Returns an array of ids for a give hasMany/belongsToMany relatioship
    *
@@ -29,7 +31,7 @@ export default class RestSerializer {
   async getRelationships(instance, association) {
     const accessors = association.accessors;
     const isManyRelationship = Object.keys(accessors).some(accessor => {
-      return [
+      const hasManyRelationshipAccessor = [
         "add",
         "addMultiple",
         "count",
@@ -37,6 +39,8 @@ export default class RestSerializer {
         "hasAll",
         "removeMultiple"
       ].some(valid => valid === accessor);
+
+      return hasManyRelationshipAccessor;
     });
 
     if (isManyRelationship) {
@@ -120,7 +124,7 @@ export default class RestSerializer {
     let key;
 
     if (!instances || !instances.length) {
-      const key = inflect.camelize(inflect.pluralize(fallbackName), false);
+      key = inflect.camelize(inflect.pluralize(fallbackName), false);
 
       response[key] = [];
 
@@ -134,48 +138,12 @@ export default class RestSerializer {
 
       records.push(json);
 
-      if (!key) {
-        key = this.keyForRecord(instance, false);
-      }
+      key = key || this.keyForRecord(instance, false);
     }
 
     response[key] = records;
 
     return response;
-  }
-
-  /**
-   * Takes a single Sequelize instance and returns an object with a root key based
-   * on the model name and a pojo record
-   *
-   * @method normalizeResponse
-   * @param {Object} instance
-   * @param {String} method
-   * @return {Promise}<Object, Error>
-   *
-   * @example
-   * ```javascript
-   * return orm.findOne("user", 1).then(user => {
-   *   return serializer.normalizeResponse(instance, "findOne");
-   * }).then(response => {
-   *   /**
-   *    * {
-   *    *   user: {
-   *    *   }
-   *    * }
-   * })
-   * ```
-   */
-  async normalizeResponse(instance, method, fallbackName) {
-    switch (method) {
-      case "createRecord":
-      case "findOne":
-      case "queryRecord":
-      case "updateRecord":
-        return this.normalizeSingularResponse(instance, fallbackName);
-      case "findAll":
-        return this.normalizeArrayResponse(instance, fallbackName);
-    }
   }
 
   /**
@@ -202,7 +170,7 @@ export default class RestSerializer {
   async normalizeSingularResponse(instance) {
     const json = instance.toJSON();
     const key = this.keyForRecord(instance, true);
-    const response = { [key]: json }
+    const response = { [key]: json };
 
     await this.normalizeRelationships(instance, response[key]);
 
@@ -233,14 +201,16 @@ export default class RestSerializer {
     const associations = instance.Model.associations;
 
     for (const association in associations) {
-      const relationship = await this.getRelationships(
-        instance,
-        associations[association]
-      );
-      const relationshipKey = this.keyForRelationship(association);
+      if (associations.hasOwnProperty(association)) {
+        const relationship = await this.getRelationships(
+            instance,
+            associations[association]
+            );
+        const relationshipKey = this.keyForRelationship(association);
 
-      if (relationship) {
-        payload[relationshipKey] = relationship;
+        if (relationship) {
+          payload[relationshipKey] = relationship;
+        }
       }
     }
 
