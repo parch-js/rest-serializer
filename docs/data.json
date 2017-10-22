@@ -34,7 +34,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/serializer.js",
-            "line": 3,
+            "line": 7,
+            "extends": "<a href=\"https://github.com/parch-js/json-serializer\" target=\"_blank\">JSONSerializer</a>",
             "is_constructor": 1
         }
     },
@@ -48,7 +49,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 8,
+            "line": 13,
             "description": "Returns an array of ids for a give hasMany/belongsToMany relatioship",
             "itemtype": "method",
             "name": "getRelationships",
@@ -75,7 +76,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 47,
+            "line": 56,
             "description": "Returns the name string for the record",
             "itemtype": "method",
             "name": "keyForRecord",
@@ -102,7 +103,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 76,
+            "line": 85,
             "description": "Return the object key for a relationship",
             "itemtype": "method",
             "name": "keyForRelationship",
@@ -124,7 +125,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 94,
+            "line": 103,
             "description": "Takes an array of Sequelize instances and returns an object with a root key\nbased on the model name and an array of pojo records",
             "itemtype": "method",
             "name": "normalizeArrayResponse",
@@ -146,34 +147,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 137,
-            "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
-            "itemtype": "method",
-            "name": "normalizeResponse",
-            "params": [
-                {
-                    "name": "instance",
-                    "description": "",
-                    "type": "Object"
-                },
-                {
-                    "name": "method",
-                    "description": "",
-                    "type": "String"
-                }
-            ],
-            "return": {
-                "description": "<Object, Error>",
-                "type": "Promise"
-            },
-            "example": [
-                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeResponse(instance, \"findOne\");\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *   }\n   * }\n})\n```"
-            ],
-            "class": "RestSerializer"
-        },
-        {
-            "file": "src/serializer.js",
-            "line": 170,
+            "line": 146,
             "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
             "itemtype": "method",
             "name": "normalizeSingularResponse",
@@ -195,7 +169,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 201,
+            "line": 177,
             "itemtype": "method",
             "name": "normalizeRelationships",
             "params": [

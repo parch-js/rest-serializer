@@ -6,6 +6,7 @@ import JSONSerializer from "@parch-js/json-serializer";
 
 /**
  * @class RestSerializer
+ * @extends <a href="https://github.com/parch-js/json-serializer" target="_blank">JSONSerializer</a>
  * @constructor
  */
 export default class RestSerializer extends JSONSerializer {
