@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "RestSerializer for parch to normalize request/response",
   "main": "index.js",
-  "repository": "https://github.com/parch-js/rest-serializer",
+  "repository": "parch-js/rest-serializer",
   "author": "Dylan Foster <dylan947@gmail.com>",
   "license": "MIT",
   "keywords": [
