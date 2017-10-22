@@ -196,19 +196,18 @@ export default class RestSerializer extends JSONSerializer {
    */
   normalizeRelationships(instance, payload) {
     const associations = instance.Model.associations;
-    let relationshipKey;
 
-    return Promise.all(Object.keys(associations).map(association => {
-      if (associations.hasOwnProperty(association)) {
-        relationshipKey = this.keyForRelationship(association);
-        return this.getRelationships(instance, associations[association]);
-      } else {
-        return [];
-      }
-    })).then(relationships => {
+    return Promise.all(Object.keys(associations).map(association =>
+      this.getRelationships(instance, associations[association]).then(relationships => {
+        return {
+          key: this.keyForRelationship(association),
+          records: relationships
+        };
+      })
+    )).then(relationships => {
       relationships.forEach(relationship => {
-        if (relationship) {
-          payload[relationshipKey] = relationship;
+        if (relationship.records) {
+          payload[relationship.key] = relationship.records;
         }
       });
 
