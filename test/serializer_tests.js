@@ -20,6 +20,12 @@ describe("RestSerializer", function () {
     it("formats a model instance for a findAll request", function () {
       return serializer.normalizeResponse([user], "findAll").then(response => {
         expect(response.users[0].firstName).to.eql("John");
+
+        const res = response.toJSON();
+
+        Object.keys(res.users[0]).forEach(property => {
+          expect(response.users[0]).to.have.property(property);
+        });
       });
     });
 
@@ -32,6 +38,12 @@ describe("RestSerializer", function () {
     it("formats a model instance for a findOne request", function () {
       return serializer.normalizeResponse(user, "findOne").then(response => {
         expect(response.user.firstName).to.eql("John");
+
+        const res = response.toJSON();
+
+        Object.keys(res.user).forEach(property => {
+          expect(response.user).to.have.property(property);
+        });
       });
     });
 
@@ -87,6 +99,7 @@ describe("RestSerializer", function () {
       it("includes relationships for a findOne request", function () {
         return serializer.normalizeResponse(user, "findOne").then(response => {
           expect(response.user.projects[0]).to.eql(project.id);
+          expect(response.user.groups[0]).to.eql(group.id);
         });
       });
     });

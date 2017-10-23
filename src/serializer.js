@@ -136,11 +136,87 @@ export default class RestSerializer extends JSONSerializer {
       key = key || this.keyForRecord(instance, false);
 
       return this.normalizeRelationships(instance, instance);
-    })).then(records => {
-      return {
-        [key]: records
-      };
+    })).then(records => this._defineArrayResponse(key, records));
+  }
+
+  _defineArrayResponse(key, records) {
+    const response = {};
+
+    Object.defineProperty(response, key, {
+      configurable: false,
+      enumerable: true,
+      value: records
     });
+
+    Object.defineProperty(response, "toJSON", {
+      configurable: false,
+      enumerable: false,
+      value() {
+        const recordArray = this[key];
+        const newRecords = recordArray.map(record => {
+          const associations = record.Model.associations;
+          const newRecord = {};
+
+          Object.keys(associations).forEach(association => {
+            if (record[association]) {
+              newRecord[association] = record[association];
+            }
+          });
+
+          const plainInstance = record.toJSON();
+
+          Object.keys(plainInstance).forEach(property => {
+            newRecord[property] = plainInstance[property];
+          });
+
+          return newRecord;
+        });
+
+        return {
+          [key]: newRecords
+        };
+      }
+    });
+
+    return response;
+  }
+
+  _defineSingularResponse(key, record) {
+    const response = {};
+
+    Object.defineProperty(response, key, {
+      configurable: false,
+      enumerable: true,
+      value: record
+    });
+
+    Object.defineProperty(response, "toJSON", {
+      configurable: false,
+      enumerable: false,
+      value() {
+        const instance = this[key];
+        const associations = instance.Model.associations;
+        const newRecord = {};
+
+        Object.keys(associations).forEach(association => {
+          if (instance[association]) {
+            newRecord[association] = instance[association];
+          }
+        });
+
+        const plainInstance = instance.toJSON();
+
+        Object.keys(plainInstance).forEach(property => {
+          newRecord[property] = plainInstance[property];
+        });
+
+        return {
+          [key]: newRecord
+        };
+      }
+    });
+
+    return response;
   }
 
   /**
@@ -167,11 +243,9 @@ export default class RestSerializer extends JSONSerializer {
   normalizeSingularResponse(instance) {
     const key = this.keyForRecord(instance, true);
 
-    return this.normalizeRelationships(instance, instance).then(newRecord => {
-      return {
-        [key]: newRecord
-      };
-    });
+    return this.normalizeRelationships(instance, instance).then(newRecord =>
+      this._defineSingularResponse(key, newRecord)
+    );
   }
 
   /**
