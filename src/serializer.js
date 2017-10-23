@@ -139,86 +139,6 @@ export default class RestSerializer extends JSONSerializer {
     })).then(records => this._defineArrayResponse(key, records));
   }
 
-  _defineArrayResponse(key, records) {
-    const response = {};
-
-    Object.defineProperty(response, key, {
-      configurable: false,
-      enumerable: true,
-      value: records
-    });
-
-    Object.defineProperty(response, "toJSON", {
-      configurable: false,
-      enumerable: false,
-      value() {
-        const recordArray = this[key];
-        const newRecords = recordArray.map(record => {
-          const associations = record.Model.associations;
-          const newRecord = {};
-
-          Object.keys(associations).forEach(association => {
-            if (record[association]) {
-              newRecord[association] = record[association];
-            }
-          });
-
-          const plainInstance = record.toJSON();
-
-          Object.keys(plainInstance).forEach(property => {
-            newRecord[property] = plainInstance[property];
-          });
-
-          return newRecord;
-        });
-
-        return {
-          [key]: newRecords
-        };
-      }
-    });
-
-    return response;
-  }
-
-  _defineSingularResponse(key, record) {
-    const response = {};
-
-    Object.defineProperty(response, key, {
-      configurable: false,
-      enumerable: true,
-      value: record
-    });
-
-    Object.defineProperty(response, "toJSON", {
-      configurable: false,
-      enumerable: false,
-      value() {
-        const instance = this[key];
-        const associations = instance.Model.associations;
-        const newRecord = {};
-
-        Object.keys(associations).forEach(association => {
-          if (instance[association]) {
-            newRecord[association] = instance[association];
-          }
-        });
-
-        const plainInstance = instance.toJSON();
-
-        Object.keys(plainInstance).forEach(property => {
-          newRecord[property] = plainInstance[property];
-        });
-
-        return {
-          [key]: newRecord
-        };
-      }
-    });
-
-    return response;
-  }
-
   /**
    * Takes a single Sequelize instance and returns an object with a root key based
    * on the model name and a pojo record
@@ -287,5 +207,179 @@ export default class RestSerializer extends JSONSerializer {
 
       return payload;
     });
+  }
+
+  /**
+   * Reformats the record into a RESTful object with the record name as the key.
+   * In addition, this will add a custom toJSON method on the response object
+   * that will serialize the response when sent through something like
+   * express#res.send, retaining the relationships on the instance, but removing
+   * all other extraneous data (see <a href="https://github.com/sequelize/sequelize/blob/16864699e0cc4b5fbc5bbf742b7a15eea9948e77/lib/model.js#L4005" target="_bank">Sequelize instance#toJSON</a>)
+   *
+   * @method _defineArrayResponse
+   * @private
+   * @param {String} key the name of the record (e.g. users)
+   * @param {Array<Object>} records Array of sequelize instances
+   * @returns {Object}
+   *
+   * @example
+   * ```javascript
+   * serializer._defineArrayResponse("users", [{
+   *   dataValues: {
+   *     firstName: "Hank",
+   *     lastName: "Hill",
+   *     projects: [1, 2]
+   *   },
+   *   someExtraneousProp: "foo"
+   * }]);
+   *
+   * /**
+   *  * {
+   *  *   users: [{
+   *  *     dataValues: {
+   *  *       firstName: "Hank",
+   *  *       lastName: "Hill",
+   *  *       projects: [1, 2],
+   *  *     },
+   *  *     someExtraneousProp: "foo",
+   *  *     toJSON() {
+   *  *     }
+   *  *   }]
+   *  * }
+   *  *
+   *  * response.toJSON()
+   *  *
+   *  * {
+   *  *   "users": [{
+   *  *     firstName: "Hank",
+   *  *     lastName: "Hill",
+   *  *     projects: [1, 2],
+   *  *   }]
+   *  * }
+   * ```
+   */
+  _defineArrayResponse(key, records) {
+    const response = {};
+
+    Object.defineProperty(response, key, {
+      configurable: false,
+      enumerable: true,
+      value: records
+    });
+
+    Object.defineProperty(response, "toJSON", {
+      configurable: false,
+      enumerable: false,
+      value() {
+        const recordArray = this[key];
+        const newRecords = recordArray.map(record => {
+          const associations = record.Model.associations;
+          const newRecord = {};
+
+          Object.keys(associations).forEach(association => {
+            if (record[association]) {
+              newRecord[association] = record[association];
+            }
+          });
+
+          const plainInstance = record.toJSON();
+
+          Object.keys(plainInstance).forEach(property => {
+            newRecord[property] = plainInstance[property];
+          });
+
+          return newRecord;
+        });
+
+        return {
+          [key]: newRecords
+        };
+      }
+    });
+
+    return response;
+  }
+
+  /**
+   * Similar to {{#crossLink "RestSerializer/_defineArrayResponse:method"}}_defineArrayResponse{{/crossLink}},
+   * the difference being that this takes a single record and returns a singular response
+   *
+   * @method _defineSingularResponse
+   * @private
+   * @param {String} key the name of the record (e.g. users)
+   * @param {Object} record Sequelize instance
+   * @returns {Object}
+   *
+   * @example
+   * ```javascript
+   * serializer._defineSingularResponse("user", {
+   *   dataValues: {
+   *     firstName: "Hank",
+   *     lastName: "Hill",
+   *     projects: [1, 2]
+   *   },
+   *   someExtraneousProp: "foo",
+   * });
+   *
+   * /**
+   *  * {
+   *  *   user: {
+   *  *     dataValues: {
+   *  *       firstName: "Hank",
+   *  *       lastName: "Hill",
+   *  *       projects: [1, 2],
+   *  *     someExtraneousProp: "foo",
+   *  *     toJSON() {
+   *  *     }
+   *  *   }
+   *  * }
+   *  *
+   *  * response.toJSON()
+   *  *
+   *  * {
+   *  *   "user": [{
+   *  *     "firstName": "Hank",
+   *  *     "lastName": "Hill",
+   *  *     "projects": [1, 2],
+   *  *   }]
+   *  * }
+   * ```
+   */
+  _defineSingularResponse(key, record) {
+    const response = {};
+
+    Object.defineProperty(response, key, {
+      configurable: false,
+      enumerable: true,
+      value: record
+    });
+
+    Object.defineProperty(response, "toJSON", {
+      configurable: false,
+      enumerable: false,
+      value() {
+        const instance = this[key];
+        const associations = instance.Model.associations;
+        const newRecord = {};
+
+        Object.keys(associations).forEach(association => {
+          if (instance[association]) {
+            newRecord[association] = instance[association];
+          }
+        });
+
+        const plainInstance = instance.toJSON();
+
+        Object.keys(plainInstance).forEach(property => {
+          newRecord[property] = plainInstance[property];
+        });
+
+        return {
+          [key]: newRecord
+        };
+      }
+    });
+
+    return response;
   }
 }
