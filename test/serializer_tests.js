@@ -20,6 +20,12 @@ describe("RestSerializer", function () {
     it("formats a model instance for a findAll request", function () {
       return serializer.normalizeResponse([user], "findAll").then(response => {
         expect(response.users[0].firstName).to.eql("John");
+
+        const res = response.toJSON();
+
+        Object.keys(res.users[0]).forEach(property => {
+          expect(response.users[0]).to.have.property(property);
+        });
       });
     });
 
@@ -32,6 +38,12 @@ describe("RestSerializer", function () {
     it("formats a model instance for a findOne request", function () {
       return serializer.normalizeResponse(user, "findOne").then(response => {
         expect(response.user.firstName).to.eql("John");
+
+        const res = response.toJSON();
+
+        Object.keys(res.user).forEach(property => {
+          expect(response.user).to.have.property(property);
+        });
       });
     });
 
@@ -87,6 +99,7 @@ describe("RestSerializer", function () {
       it("includes relationships for a findOne request", function () {
         return serializer.normalizeResponse(user, "findOne").then(response => {
           expect(response.user.projects[0]).to.eql(project.id);
+          expect(response.user.groups[0]).to.eql(group.id);
         });
       });
     });
@@ -99,11 +112,13 @@ describe("RestSerializer", function () {
       return Promise.all([
         fixtures.GroupModel.create({ name: "awesomeness" }),
         fixtures.ProjectModel.create({ name: "test" }),
-        fixtures.UserModel.create({ firstName: "jane" })
+        fixtures.UserModel.create({ firstName: "jane" }),
+        fixtures.ProjectModel.create({ name: "test2" })
       ]).then(response => {
         const awesomeness = response[0];
         const test = response[1];
         const jane = response[2];
+        const test2 = response[3];
 
         group = awesomeness;
         parent = jane;
@@ -112,7 +127,7 @@ describe("RestSerializer", function () {
         return Promise.all([
           user.setParent(parent),
           user.setGroups([group]),
-          user.setProjects([project])
+          user.setProjects([project, test2])
         ]);
       });
     });
@@ -121,8 +136,9 @@ describe("RestSerializer", function () {
       const associations = user.Model.associations;
 
       return serializer
-        .normalizeRelationships(user, user.toJSON())
+        .normalizeRelationships(user, user)
         .then(res => {
+          expect(res.groups[0]).to.eql(group.id);
           expect(res.projects[0]).to.eql(project.id);
         });
     });
