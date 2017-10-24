@@ -2,7 +2,7 @@
     "project": {
         "name": "@parch-js/orm",
         "url": "https://github.com/parch-js/orm",
-        "version": "0.0.1",
+        "version": "0.1.0",
         "description": "RestSerializer for parch to normalize request/response"
     },
     "files": {
