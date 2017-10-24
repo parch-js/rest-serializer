@@ -2,7 +2,7 @@
     "project": {
         "name": "@parch-js/orm",
         "url": "https://github.com/parch-js/orm",
-        "version": "0.0.1",
+        "version": "0.1.0",
         "description": "RestSerializer for parch to normalize request/response"
     },
     "files": {
@@ -34,7 +34,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/serializer.js",
-            "line": 3,
+            "line": 7,
+            "extends": "<a href=\"https://github.com/parch-js/json-serializer\" target=\"_blank\">JSONSerializer</a>",
             "is_constructor": 1
         }
     },
@@ -48,7 +49,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 8,
+            "line": 13,
             "description": "Returns an array of ids for a give hasMany/belongsToMany relatioship",
             "itemtype": "method",
             "name": "getRelationships",
@@ -75,7 +76,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 47,
+            "line": 56,
             "description": "Returns the name string for the record",
             "itemtype": "method",
             "name": "keyForRecord",
@@ -102,7 +103,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 76,
+            "line": 85,
             "description": "Return the object key for a relationship",
             "itemtype": "method",
             "name": "keyForRelationship",
@@ -124,7 +125,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 94,
+            "line": 103,
             "description": "Takes an array of Sequelize instances and returns an object with a root key\nbased on the model name and an array of pojo records",
             "itemtype": "method",
             "name": "normalizeArrayResponse",
@@ -146,34 +147,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 137,
-            "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
-            "itemtype": "method",
-            "name": "normalizeResponse",
-            "params": [
-                {
-                    "name": "instance",
-                    "description": "",
-                    "type": "Object"
-                },
-                {
-                    "name": "method",
-                    "description": "",
-                    "type": "String"
-                }
-            ],
-            "return": {
-                "description": "<Object, Error>",
-                "type": "Promise"
-            },
-            "example": [
-                "\n```javascript\nreturn orm.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeResponse(instance, \"findOne\");\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *   }\n   * }\n})\n```"
-            ],
-            "class": "RestSerializer"
-        },
-        {
-            "file": "src/serializer.js",
-            "line": 170,
+            "line": 142,
             "description": "Takes a single Sequelize instance and returns an object with a root key based\non the model name and a pojo record",
             "itemtype": "method",
             "name": "normalizeSingularResponse",
@@ -195,7 +169,7 @@
         },
         {
             "file": "src/serializer.js",
-            "line": 201,
+            "line": 171,
             "itemtype": "method",
             "name": "normalizeRelationships",
             "params": [
@@ -218,9 +192,75 @@
                 "\n```javascript\nreturn store.findOne(\"user\", 1).then(user => {\n  return serializer.normalizeRelationships(user, user.toJSON());\n}).then(response => {\n  /**\n   * {\n   *   user: {\n   *     projects: [1, 2, 3]\n   *   }\n   * }\n});\n```"
             ],
             "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 212,
+            "description": "Reformats the record into a RESTful object with the record name as the key.\nIn addition, this will add a custom toJSON method on the response object\nthat will serialize the response when sent through something like\nexpress#res.send, retaining the relationships on the instance, but removing\nall other extraneous data (see <a href=\"https://github.com/sequelize/sequelize/blob/16864699e0cc4b5fbc5bbf742b7a15eea9948e77/lib/model.js#L4005\" target=\"_bank\">Sequelize instance#toJSON</a>)",
+            "itemtype": "method",
+            "name": "_defineArrayResponse",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the name of the record (e.g. users)",
+                    "type": "String"
+                },
+                {
+                    "name": "records",
+                    "description": "Array of sequelize instances",
+                    "type": "Array<Object>"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "example": [
+                "\n```javascript\nserializer._defineArrayResponse(\"users\", [{\n  dataValues: {\n    firstName: \"Hank\",\n    lastName: \"Hill\",\n    projects: [1, 2]\n  },\n  someExtraneousProp: \"foo\"\n}]);\n\n/**\n * {\n *   users: [{\n *     dataValues: {\n *       firstName: \"Hank\",\n *       lastName: \"Hill\",\n *       projects: [1, 2],\n *     },\n *     someExtraneousProp: \"foo\",\n *     toJSON() {\n *     }\n *   }]\n * }\n *\n * response.toJSON()\n *\n * {\n *   \"users\": [{\n *     firstName: \"Hank\",\n *     lastName: \"Hill\",\n *     projects: [1, 2],\n *   }]\n * }\n```"
+            ],
+            "class": "RestSerializer"
+        },
+        {
+            "file": "src/serializer.js",
+            "line": 303,
+            "description": "Similar to {{#crossLink \"RestSerializer/_defineArrayResponse:method\"}}_defineArrayResponse{{/crossLink}},\nthe difference being that this takes a single record and returns a singular response",
+            "itemtype": "method",
+            "name": "_defineSingularResponse",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "key",
+                    "description": "the name of the record (e.g. users)",
+                    "type": "String"
+                },
+                {
+                    "name": "record",
+                    "description": "Sequelize instance",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "example": [
+                "\n```javascript\nserializer._defineSingularResponse(\"user\", {\n  dataValues: {\n    firstName: \"Hank\",\n    lastName: \"Hill\",\n    projects: [1, 2]\n  },\n  someExtraneousProp: \"foo\",\n});\n\n/**\n * {\n *   user: {\n *     dataValues: {\n *       firstName: \"Hank\",\n *       lastName: \"Hill\",\n *       projects: [1, 2],\n *     someExtraneousProp: \"foo\",\n *     toJSON() {\n *     }\n *   }\n * }\n *\n * response.toJSON()\n *\n * {\n *   \"user\": [{\n *     \"firstName\": \"Hank\",\n *     \"lastName\": \"Hill\",\n *     \"projects\": [1, 2],\n *   }]\n * }\n```"
+            ],
+            "class": "RestSerializer"
         }
     ],
     "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/serializer.js:212"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " src/serializer.js:303"
+        },
         {
             "message": "Missing item type\nBootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
             "line": " docs/assets/vendor/bootstrap/js/bootstrap.min.js:1"

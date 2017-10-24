@@ -1,7 +1,7 @@
 {
   "name": "@parch-js/orm",
   "url": "https://github.com/parch-js/orm",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "options": {
     "exclude": "lib",
     "helpers": ["node_modules/yuidoc-lucid-theme/helpers/helpers.js"],
