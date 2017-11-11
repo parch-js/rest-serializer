@@ -133,7 +133,7 @@ describe("RestSerializer", function () {
     });
 
     it("formats hasMany/belongsToMany relationships", function () {
-      const associations = user.Model.associations;
+      const associations = user.constructor.associations;
 
       return serializer
         .normalizeRelationships(user, user)
@@ -144,7 +144,7 @@ describe("RestSerializer", function () {
     });
 
     it("returns an empty array if no records are found", function () {
-      const associations = user.Model.associations;
+      const associations = user.constructor.associations;
 
       return user.setProjects([])
         .then(() => serializer.normalizeRelationships(user, user.toJSON()))

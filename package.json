@@ -48,9 +48,9 @@
   },
   "dependencies": {
     "@parch-js/json-serializer": "^0.0.1",
-    "inflect": "^0.3.0",
-    "restify-errors": "^4.3.0",
-    "sequelize": "^3.30.4"
+    "inflect": "^0.4.0",
+    "restify-errors": "^5.0.0",
+    "sequelize": "^4.22.6"
   },
   "eslintConfig": {
     "extends": "unstandard",
