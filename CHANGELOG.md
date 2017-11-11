@@ -1,3 +1,13 @@
+<a name="0.1.1"></a>
+## [0.1.1](https://github.com/parch-js/rest-serializer/compare/0.1.0...0.1.1) (2017-10-24)
+
+
+### Bug Fixes
+
+* **serializer:** add empty array when no relationships are found ([65a811f](https://github.com/parch-js/rest-serializer/commit/65a811f))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2017-10-24)
 

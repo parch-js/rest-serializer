@@ -102,6 +102,15 @@ describe("RestSerializer", function () {
           expect(response.user.groups[0]).to.eql(group.id);
         });
       });
+
+      it("includes an empty array if there are no relationships", function () {
+        return user.setGroups([]).then(() =>
+          serializer.normalizeResponse(user, "findOne").then(response => {
+            expect(response.user.projects[0]).to.eql(project.id);
+            expect(response.user.groups).to.eql([]);
+          })
+        );
+      });
     });
   });
 

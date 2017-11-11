@@ -200,9 +200,7 @@ export default class RestSerializer extends JSONSerializer {
       })
     )).then(relationships => {
       relationships.forEach(relationship => {
-        if (relationship.records) {
-          payload[relationship.key] = relationship.records;
-        }
+        payload[relationship.key] = relationship.records;
       });
 
       return payload;
@@ -260,6 +258,7 @@ export default class RestSerializer extends JSONSerializer {
    */
   _defineArrayResponse(key, records) {
     const response = {};
+    const self = this;
 
     Object.defineProperty(response, key, {
       configurable: false,
@@ -277,8 +276,10 @@ export default class RestSerializer extends JSONSerializer {
           const newRecord = {};
 
           Object.keys(associations).forEach(association => {
-            if (record[association]) {
-              newRecord[association] = record[association];
+            const associationKey = self.keyForRelationship(association);
+
+            if (record[associationKey]) {
+              newRecord[associationKey] = record[associationKey];
             }
           });
 
@@ -347,6 +348,7 @@ export default class RestSerializer extends JSONSerializer {
    */
   _defineSingularResponse(key, record) {
     const response = {};
+    const self = this;
 
     Object.defineProperty(response, key, {
       configurable: false,
@@ -363,8 +365,10 @@ export default class RestSerializer extends JSONSerializer {
         const newRecord = {};
 
         Object.keys(associations).forEach(association => {
-          if (instance[association]) {
-            newRecord[association] = instance[association];
+          const associationKey = self.keyForRelationship(association);
+
+          if (instance[associationKey]) {
+            newRecord[associationKey] = instance[associationKey];
           }
         });
 
