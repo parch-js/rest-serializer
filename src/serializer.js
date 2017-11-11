@@ -74,7 +74,7 @@ export default class RestSerializer extends JSONSerializer {
    * ```
    */
   keyForRecord(instance, singular) {
-    const tableName = instance.Model.getTableName();
+    const tableName = instance.constructor.getTableName();
     const recordKey = tableName.toLowerCase();
 
     if (singular) { return inflect.singularize(recordKey); }
@@ -189,7 +189,7 @@ export default class RestSerializer extends JSONSerializer {
    * ```
    */
   normalizeRelationships(instance, payload) {
-    const associations = instance.Model.associations;
+    const associations = instance.constructor.associations;
 
     return Promise.all(Object.keys(associations).map(association =>
       this.getRelationships(instance, associations[association]).then(relationships => {
@@ -272,7 +272,7 @@ export default class RestSerializer extends JSONSerializer {
       value() {
         const recordArray = this[key];
         const newRecords = recordArray.map(record => {
-          const associations = record.Model.associations;
+          const associations = record.constructor.associations;
           const newRecord = {};
 
           Object.keys(associations).forEach(association => {
@@ -361,7 +361,7 @@ export default class RestSerializer extends JSONSerializer {
       enumerable: false,
       value() {
         const instance = this[key];
-        const associations = instance.Model.associations;
+        const associations = instance.constructor.associations;
         const newRecord = {};
 
         Object.keys(associations).forEach(association => {
