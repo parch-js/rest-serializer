@@ -1,3 +1,8 @@
+<a name="0.1.2"></a>
+## [0.1.2](https://github.com/parch-js/rest-serializer/compare/0.1.1...0.1.2) (2017-11-11)
+
+
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://github.com/parch-js/rest-serializer/compare/0.1.0...0.1.1) (2017-10-24)
 
