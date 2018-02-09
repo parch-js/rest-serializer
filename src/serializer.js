@@ -212,7 +212,7 @@ export default class RestSerializer extends JSONSerializer {
   }
 
   /**
-   * Overwrites the .toJSON method to attach relationships.
+   * Overwrites the .toJSON method to attach relationships on array responses.
    *
    * @method _cloneArrayRecordForJSON
    * @param {String} key the resource key (e.g. 'users')
@@ -259,6 +259,8 @@ export default class RestSerializer extends JSONSerializer {
   }
 
   /**
+   * Overwrites the .toJSON method to attach relationships on singular responses.
+   *
    * @method _cloneSingularResponseForJSON
    * @param {String} key the resource key (e.g. 'user')
    * @param {Object} payload formatted singular response object
