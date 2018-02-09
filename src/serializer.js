@@ -29,7 +29,7 @@ export default class RestSerializer extends JSONSerializer {
    * });
    * ```
    */
-  getRelationships(instance, association) {
+  async getRelationships(instance, association) {
     const accessors = association.accessors;
     const isManyRelationship = Object.keys(accessors).some(accessor => {
       const hasManyRelationshipAccessor = [
@@ -45,11 +45,11 @@ export default class RestSerializer extends JSONSerializer {
     });
 
     if (isManyRelationship) {
-      return instance[accessors.get]().then(relationships =>
-        relationships.map(relationship => relationship.id)
-      );
+      const relationships = await instance[accessors.get]();
+
+      return relationships.map(relationship => relationship.id);
     } else {
-      return Promise.resolve();
+      return Promise.resolve([]);
     }
   }
 
@@ -121,22 +121,27 @@ export default class RestSerializer extends JSONSerializer {
    * });
    * ```
    */
-  normalizeArrayResponse(instances, fallbackName) {
+  async normalizeArrayResponse(instances, fallbackName) {
     let key;
 
     if (!instances || !instances.length) {
       key = inflect.camelize(inflect.pluralize(fallbackName), false);
 
-      return Promise.resolve({
+      const response = {
         [key]: []
-      });
+      };
+
+      return response;
     }
 
-    return Promise.all(instances.map(instance => {
-      key = key || this.keyForRecord(instance, false);
+    const records = [];
 
-      return this.normalizeRelationships(instance, instance);
-    })).then(records => this._defineArrayResponse(key, records));
+    for (const instance of instances) {
+      key = key || this.keyForRecord(instance, false);
+      records.push((await this.normalizeRelationships(instance, instance)));
+    }
+
+    return this._defineArrayResponse(key, records);
   }
 
   /**
@@ -160,12 +165,11 @@ export default class RestSerializer extends JSONSerializer {
    * });
    * ```
    */
-  normalizeSingularResponse(instance) {
+  async normalizeSingularResponse(instance) {
     const key = this.keyForRecord(instance, true);
+    const record = await this.normalizeRelationships(instance, instance);
 
-    return this.normalizeRelationships(instance, instance).then(newRecord =>
-      this._defineSingularResponse(key, newRecord)
-    );
+    return this._defineSingularResponse(key, record);
   }
 
   /**
@@ -188,23 +192,83 @@ export default class RestSerializer extends JSONSerializer {
    * });
    * ```
    */
-  normalizeRelationships(instance, payload) {
+  async normalizeRelationships(instance, payload) {
     const associations = instance.constructor.associations;
 
-    return Promise.all(Object.keys(associations).map(association =>
-      this.getRelationships(instance, associations[association]).then(relationships => {
-        return {
-          key: this.keyForRelationship(association),
-          records: relationships
-        };
-      })
-    )).then(relationships => {
-      relationships.forEach(relationship => {
-        payload[relationship.key] = relationship.records;
+    for (const associationKey in associations) {
+      const key = this.keyForRelationship(associationKey);
+      const relationships = await this.getRelationships(instance, associations[associationKey]);
+
+      addToObject(payload, key, relationships);
+    }
+
+    return payload;
+  }
+
+  /**
+   * _cloneArrayRecordForJSON
+   *
+   * @param key
+   * @param record
+   * @returns {undefined}
+   */
+  _cloneArrayResponseForJSON(key, record) {
+    const recordArray = record[key];
+    const recordArrayCopy = recordArray.map(record => {
+      const associations = record.constructor.associations;
+      const recordCopy = {};
+
+      Object.keys(associations).forEach(association => {
+        const associationKey = this.keyForRelationship(association);
+
+        if (record[associationKey]) {
+          recordCopy[associationKey] = record[associationKey];
+        }
       });
 
-      return payload;
+      const plainInstance = record.toJSON();
+
+      Object.keys(plainInstance).forEach(property => {
+        recordCopy[property] = plainInstance[property];
+      });
+
+      return recordCopy;
     });
+
+    return {
+      [key]: recordArrayCopy
+    };
+  }
+
+  /**
+   * _cloneSingularResponseForJSON
+   *
+   * @param key
+   * @param record
+   * @returns {undefined}
+   */
+  _cloneSingularResponseForJSON(key, record) {
+    const instance = record[key];
+    const associations = instance.constructor.associations;
+    const recordClone = {};
+
+    Object.keys(associations).forEach(association => {
+      const associationKey = this.keyForRelationship(association);
+
+      if (instance[associationKey]) {
+        recordClone[associationKey] = instance[associationKey];
+      }
+    });
+
+    const plainInstance = instance.toJSON();
+
+    Object.keys(plainInstance).forEach(property => {
+      recordClone[property] = plainInstance[property];
+    });
+
+    return {
+      [key]: recordClone
+    };
   }
 
   /**
@@ -258,7 +322,6 @@ export default class RestSerializer extends JSONSerializer {
    */
   _defineArrayResponse(key, records) {
     const response = {};
-    const self = this;
 
     Object.defineProperty(response, key, {
       configurable: false,
@@ -269,33 +332,7 @@ export default class RestSerializer extends JSONSerializer {
     Object.defineProperty(response, "toJSON", {
       configurable: false,
       enumerable: false,
-      value() {
-        const recordArray = this[key];
-        const newRecords = recordArray.map(record => {
-          const associations = record.constructor.associations;
-          const newRecord = {};
-
-          Object.keys(associations).forEach(association => {
-            const associationKey = self.keyForRelationship(association);
-
-            if (record[associationKey]) {
-              newRecord[associationKey] = record[associationKey];
-            }
-          });
-
-          const plainInstance = record.toJSON();
-
-          Object.keys(plainInstance).forEach(property => {
-            newRecord[property] = plainInstance[property];
-          });
-
-          return newRecord;
-        });
-
-        return {
-          [key]: newRecords
-        };
-      }
+      value: this._cloneArrayResponseForJSON.bind(this, key, response)
     });
 
     return response;
@@ -348,7 +385,6 @@ export default class RestSerializer extends JSONSerializer {
    */
   _defineSingularResponse(key, record) {
     const response = {};
-    const self = this;
 
     Object.defineProperty(response, key, {
       configurable: false,
@@ -359,31 +395,13 @@ export default class RestSerializer extends JSONSerializer {
     Object.defineProperty(response, "toJSON", {
       configurable: false,
       enumerable: false,
-      value() {
-        const instance = this[key];
-        const associations = instance.constructor.associations;
-        const newRecord = {};
-
-        Object.keys(associations).forEach(association => {
-          const associationKey = self.keyForRelationship(association);
-
-          if (instance[associationKey]) {
-            newRecord[associationKey] = instance[associationKey];
-          }
-        });
-
-        const plainInstance = instance.toJSON();
-
-        Object.keys(plainInstance).forEach(property => {
-          newRecord[property] = plainInstance[property];
-        });
-
-        return {
-          [key]: newRecord
-        };
-      }
+      value: this._cloneSingularResponseForJSON.bind(this, key, response)
     });
 
     return response;
   }
 }
+
+const addToObject = function (obj, key, value) {
+  obj[key] = value;
+};
