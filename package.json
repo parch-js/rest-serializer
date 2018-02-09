@@ -26,6 +26,9 @@
     "watch:cover": "chokidar 'src/**' 'test/**/*.js' -c 'yarn cover' --initial",
     "watch:test": "chokidar 'src/**' 'test/**/*.js' -c 'yarn test' --initial"
   },
+  "engines": {
+    "node": ">= 8"
+  },
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-eslint": "^8.0.2",
@@ -81,7 +84,11 @@
   },
   "babel": {
     "presets": [
-      "env"
+      ["env", {
+        "targets": {
+          "node": "8"
+        }
+      }]
     ],
     "plugins": [
       "babel-plugin-add-module-exports"
