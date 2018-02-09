@@ -4,6 +4,10 @@ import inflect from "inflect";
 
 import JSONSerializer from "@parch-js/json-serializer";
 
+const addToObject = function addToObject(obj, key, value) {
+  obj[key] = value;
+};
+
 /**
  * @class RestSerializer
  * @extends <a href="https://github.com/parch-js/json-serializer" target="_blank">JSONSerializer</a>
@@ -16,7 +20,7 @@ export default class RestSerializer extends JSONSerializer {
    * @method getRelationships
    * @param {Object} instance Sequelize model instance
    * @param {Object} association Sequelize model instance
-   * @return {Array}
+   * @return {Promise}<Array>
    *
    * @example
    * ```javascript
@@ -196,24 +200,38 @@ export default class RestSerializer extends JSONSerializer {
     const associations = instance.constructor.associations;
 
     for (const associationKey in associations) {
-      const key = this.keyForRelationship(associationKey);
-      const relationships = await this.getRelationships(instance, associations[associationKey]);
+      if (associations.hasOwnProperty(associationKey)) {
+        const key = this.keyForRelationship(associationKey);
+        const relationships = await this.getRelationships(instance, associations[associationKey]);
 
-      addToObject(payload, key, relationships);
+        addToObject(payload, key, relationships);
+      }
     }
 
     return payload;
   }
 
   /**
-   * _cloneArrayRecordForJSON
+   * Overwrites the .toJSON method to attach relationships.
    *
-   * @param key
-   * @param record
-   * @returns {undefined}
+   * @method _cloneArrayRecordForJSON
+   * @param {String} key the resource key (e.g. 'users')
+   * @param {Object} payload formatted array response object
+   * @return {Object} payload
+   *
+   * @example
+   * ```
+   * const record = serializer._cloneArrayRecordForJSON('users', {
+   *   users: SequelizeInstance[]
+   * });
+   *
+   * /** {
+   *  *    "users": SequelizeInstance[]
+   *  *  }
+   * ```
    */
-  _cloneArrayResponseForJSON(key, record) {
-    const recordArray = record[key];
+  _cloneArrayResponseForJSON(key, payload) {
+    const recordArray = payload[key];
     const recordArrayCopy = recordArray.map(record => {
       const associations = record.constructor.associations;
       const recordCopy = {};
@@ -241,11 +259,21 @@ export default class RestSerializer extends JSONSerializer {
   }
 
   /**
-   * _cloneSingularResponseForJSON
+   * @method _cloneSingularResponseForJSON
+   * @param {String} key the resource key (e.g. 'user')
+   * @param {Object} payload formatted singular response object
+   * @return {Object} payload
    *
-   * @param key
-   * @param record
-   * @returns {undefined}
+   * @example
+   * ```
+   * const record = serializer._cloneSingularRecordForJSON('user', {
+   *   user: SequelizeInstance
+   * });
+   *
+   * /** {
+   *  *    "user": SequelizeInstance
+   *  *  }
+   * ```
    */
   _cloneSingularResponseForJSON(key, record) {
     const instance = record[key];
@@ -401,7 +429,3 @@ export default class RestSerializer extends JSONSerializer {
     return response;
   }
 }
-
-const addToObject = function (obj, key, value) {
-  obj[key] = value;
-};
